@@ -5,12 +5,16 @@ let app = express();
 let mongoose = require("mongoose");
 
 // let rentalObjects = [
-//     { name: "Generator Set", description: "10KVA", price: 1200, imgSource: "/images/generator.jpg" },
+//     { name: "Generator Set", description: "10KVA", price: 1200, imgSource: "https://i.imgur.com/OwZkp7O.jpg" },
+//     { name: "Air cooler", description: "fan coolers", price: 2500, imgSource: "https://i.imgur.com/LIBSVUF.jpg" },
+//     { name: "Coring Machine", description: "Portable Coring Machine", price: 5000, imgSource: "https://i.imgur.com/Acftg1s.jpg" },
+
+
 //     { name: "Industrial fan", description: "Stand Fan", price: 1900, imgSource: "https://i.imgur.com/vcqEmRW.jpg" },
-//     { name: "Air cooler", description: "fan coolers", price: 2500, imgSource: "/images/aircooler.jpg" },
+
 //     { name: "Jack Hammer", description: "Portable Jackhammer", price: 800, imgSource: "https://i.imgur.com/SyuUX9F.jpg" },
 //     { name: "Welding Machine", description: "Portable Welding Machine", price: 900, imgSource: "https://i.imgur.com/EF8eRoG.jpg" },
-//     { name: "Coring Machine", description: "Portable Coring Machine", price: 5000, imgSource: "/images/coringmachine.jpg" },
+
 // ];
 // console.log(rentalObjects);
 // console.log(rentalObjects[0]["name"]);
@@ -20,6 +24,7 @@ let mongoose = require("mongoose");
 //when you run mongoose connect this will try to find the bird_app then if it did not find it will create one
 //from mongoose.com documentation
 //the birdApp is the name of our database
+//npm uninstall mongoose ; npm i mongoose@5.9.8 --save
 mongoose.connect('mongodb://localhost:27017/justRentDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(express.static("public"));
@@ -54,7 +59,6 @@ let Rental = mongoose.model("Rental", justRentSchema);
 //     }
 // );
 
-
 //Route for the landingPage.ejs
 app.get("/", function (req, res) {
     res.render("landingPage");
@@ -88,10 +92,10 @@ app.post("/forRentItems", function (req, res) {
     //the form from the landing page will send a body 
     console.log(req);
     //to view the req.body you need to install the nmp i body-parser and use it; no body parser, no req.body
-
     console.log(req.body);
     let newPost = req.body;
 
+    //create an object from the req.body and pass it to the mongoose syntax
     let newObject = {
         name: newPost.name,
         description: newPost.description,
@@ -101,10 +105,22 @@ app.post("/forRentItems", function (req, res) {
 
     console.log("---------------------");
     console.log(newObject);
-    rentalObjects.push(newObject);
+    //CREATE A NEW RENTAL ITEM using the OBJECT you got from the req.body
+    Rental.create(
+       newObject,
+        function(err, newItem){
+            if(err){
+                console.log(err);
+            } else {
+                console.log("added ITEMS!!!!")
+                console.log(newItem);
+    res.redirect("/forRentItems");
+            }
+        }
+    );
+
     console.log("POST ROUTE");
     //redirects you to the getroute
-    res.redirect("/forRentItems");
 });
 
 // app.get("*", function (req, res) {
