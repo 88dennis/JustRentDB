@@ -64,6 +64,7 @@ app.get("/", function (req, res) {
     res.render("landingPage");
 });
 
+//INDEX ROUTE
 //Route for the viewRentalsPage.ejs - where the items are displayed
 app.get("/forRentItems", function (req, res) {
     //GET ALL ITEMS FOR RENT FROM THE DATABASE USING MONGOOSE SYNTAX REFERRING TO THE MONGOOSE MODEL
@@ -78,11 +79,15 @@ app.get("/forRentItems", function (req, res) {
     })
 });
 
+//NEW ROUTE
 //Route for the Page new.ejs - where you add new items
 app.get("/forRentItems/new", function (req, res) {
     res.render("new");
 });
 
+
+
+//CREATE ROUTE
 //Route for the FORM action, METHOD POST - getting the body from a FORM and redirects to the forRentItems route showing the viewRentals.ejs
 app.post("/forRentItems", function (req, res) {
     //get data from form
@@ -123,6 +128,23 @@ app.post("/forRentItems", function (req, res) {
     //redirects you to the getroute
 });
 
+
+//SHOW ROUTE - PASS INFO FROM ONE EJS FILE/ PAGE TO ANOTHER
+app.get("/forRentItems/:id", function(req, res){
+    //from the anchor tag at viewRentals page moreinfo the route will give you the id
+    console.log(req.params.id);
+    let itemId = req.params.id;
+    Rental.findById(itemId, function(err, itemInfo){
+        if(err){
+            console.log(err);
+        } else {
+            console.log(itemInfo);
+            res.render("moreInfo", {itemInfoEjs: itemInfo});
+        }
+    })
+});
+
+
 // app.get("*", function (req, res) {
 //     res.send("PAGE NOT asd");
 // });
@@ -157,4 +179,13 @@ app.listen(PORT, function () {
 //----------------
 
 // var nf = new Intl.NumberFormat();
-// nf.format(number); // "1,234,567,890"
+// nf.format(number); // "1,234,567,890"    
+
+
+// RESTFUL ROUTES
+// (STRUCTURE/ PATTERN)
+// name		url		        verb		    desc
+// INDEX	/rentals	    GET		        displays all the rentals
+// NEW		/rentals/new	GET		        displays the form to make a new rental item
+// CREATE	/rentals	    POST		    add new rental item to DB
+// SHOW      /rentals/:id    GET             shows info about one dog
